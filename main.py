@@ -1,5 +1,18 @@
+import urllib.request
 import requests
+import os
 from bs4 import BeautifulSoup
+
+
+def process():
+    links_cat = []
+    links_books = []
+    titles = []
+    extract_cat(links_cat)
+    extract_books(links_books, links_cat)
+    extract_data(links_books, titles)
+    titres = set(titles)
+    print(f"Après suppression des doubles il reste {len(titres)} titres")
 
 
 def extract_cat(links_cat):
@@ -19,19 +32,22 @@ def extract_cat(links_cat):
             url = link.replace("index.html", "page-")
             i = 1
             response2 = requests.get(url + str(i) + ".html")
+
             while response2.ok:
                 i += 1
                 lien = url + str(i) + ".html"
                 response3 = requests.get(lien)
+
                 if response3.ok:
                     links_cat.append(lien)
+
                 else:
                     break
 
         return links_cat
 
 
-def extract_books(links_books):
+def extract_books(links_books, links_cat):
 
     for link in links_cat:
         response = requests.get(link)
@@ -45,10 +61,11 @@ def extract_books(links_books):
                 link = a["href"]
                 clean = link.replace("../../../", "")
                 links_books.append("http://books.toscrape.com/catalogue/" + clean)
-            return links_books
+
+    return links_books
 
 
-def extract_data():
+def extract_data(links_books, titles):
 
     separator = "|"
 
@@ -69,7 +86,7 @@ def extract_data():
                 universal_product_code = upc[0].text
 
                 title = soup.find("li", {"class": "active"}).text
-                print(title)
+                titles.append(title)
 
                 pit = soup.find("table", {"class": "table table-striped"}).find_all("td")
                 price_including_tax = pit[3].text
@@ -88,28 +105,36 @@ def extract_data():
 
                 cat = soup.find("li", {"class": "active"}).findPrevious("a")
                 category = cat.text
-                print(category)
 
-                rr = soup.find("table", {"class": "table table-striped"}).find_all("td")
-                review_rating = rr[6].text
+                if soup.find("p", {"class": "star-rating One"}):
+                    review_rating = "1 Étoile"
+                elif soup.find("p", {"class": "star-rating Two"}):
+                    review_rating = "2 Étoiles"
+                elif soup.find("p", {"class": "star-rating Three"}):
+                    review_rating = "3 Étoiles"
+                elif soup.find("p", {"class": "star-rating Four"}):
+                    review_rating = "4 Étoiles"
+                else:
+                    review_rating = "5 Étoiles"
 
                 img = soup.find("div", {"class": "item active"}).find("img")
                 img_url = img["src"]
                 cleaner = img_url.replace("../../", "")
                 image_url = ("http://books.toscrape.com/" + cleaner)
+                if not os.path.exists("C:/Users/winke/Desktop/GitHub/Webscraping/Images"):
+                    os.makedirs("C:/Users/winke/Desktop/GitHub/Webscraping/Images")
+                with open("C:/Users/winke/Desktop/GitHub/Webscraping/Images/" +
+                          title.replace(":", "").replace("/", "").replace("\"", "").replace("*", "#").replace("?", "")
+                          + ".jpg", 'wb') as image:
+                    image.write(urllib.request.urlopen(image_url).read())
+                image.close()
 
                 outf.write(product_page_url + separator + universal_product_code + separator + title + separator +
                            price_including_tax + separator + price_excluding_tax + separator + number_available +
                            separator + product_description + separator + category + separator + review_rating +
                            separator + image_url + "\n")
+        return titles
 
-
-def process():
-    links_cat = []
-    links_books = []
-    extract_cat(links_cat)
-    # extract_books(links_books)
-    # extract_data()
 
 process()
 
@@ -118,5 +143,4 @@ process()
 "1 extraire cat"
 "2 extraire liens des livres"
 "3 extraire data avec un csv par catégorie"
-"extraire nombre d'étoiles"
-"Mettre titres dans set (video) = 999 titres différents"
+"extraire les photos dans un dossier et les lier à la base de données"
