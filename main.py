@@ -6,15 +6,12 @@ from bs4 import BeautifulSoup
 
 
 def process():
-    titles = []
+
     extract_cat()
-    titles.append(extract_data(titles))
-    titres = set(titles)
-    print(f"Après suppression des doubles il reste {len(titres)} titres")
 
 
 def extract_cat():
-
+    titles = []
     url = "http://books.toscrape.com"
     response = requests.get(url)
 
@@ -46,6 +43,10 @@ def extract_cat():
                     break
             links_books = extract_books(links_cat)
             extract_data(links_books, cat)
+            titles.extend(extract_data(links_books, cat))
+    print(titles)
+    titres = set(titles)
+    print(f"Après suppression des doubles il reste {len(titres)} titres")
 
 
 def extract_books(links_cat):
