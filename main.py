@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 
 
 def process():
-
     extract_cat()
 
 
@@ -44,7 +43,6 @@ def extract_cat():
             links_books = extract_books(links_cat)
             extract_data(links_books, cat)
             titles.extend(extract_data(links_books, cat))
-    print(titles)
     titres = set(titles)
     print(f"Après suppression des doubles il reste {len(titres)} titres")
 
