@@ -22,8 +22,8 @@ def extract_cat():
             links_cat = []
             a = ul.find("a")
             linky = a["href"]
-            cat = a.text.replace("\n", "").replace(" ", "")
-            cat = category_correction(cat)
+            cat = a.text
+            cat = cat.strip()
             link = ("http://books.toscrape.com/" + linky)
             links_cat.append(link)
             url = link.replace("index.html", "page-")
@@ -44,7 +44,7 @@ def extract_cat():
             extract_data(links_books, cat)
             titles.extend(extract_data(links_books, cat))
     titres = set(titles)
-    print(f"Après suppression des doubles il reste {len(titres)} titres")
+    print(f"Apres suppression des doubles il reste {len(titres)} titres")
 
 
 def extract_books(links_cat):
@@ -154,38 +154,6 @@ def extract_data(links_books, cat):
                     image.write(urllib.request.urlopen(image_url).read())
                 writer.writerow(data)
     return titles
-
-
-def category_correction(cat):
-    if cat == "HistoricalFiction":
-        cat = "Historical Fiction"
-    elif cat == "SequentialArt":
-        cat = "Sequential Art"
-    elif cat == "WomensFiction":
-        cat = "Womens Fiction"
-    elif cat == "Nonfiction":
-        cat = "Non fiction"
-    elif cat == "ScienceFiction":
-        cat = "Science Fiction"
-    elif cat == "SportsandGames":
-        cat = "Sports and Games"
-    elif cat == "Addacomment":
-        cat = "Add a comment"
-    elif cat == "NewAdult":
-        cat = "New Adult"
-    elif cat == "YoungAdult":
-        cat = "Young Adult"
-    elif cat == "AdultFiction":
-        cat = "Adult Fiction"
-    elif cat == "FoodandDrink":
-        cat = "Food and Drink"
-    elif cat == "ChristianFiction":
-        cat = "Christian Fiction"
-    elif cat == "SelfHelp":
-        cat = "Self Help"
-    elif cat == "ShortStories":
-        cat = "Short Stories"
-    return cat
 
 
 process()
