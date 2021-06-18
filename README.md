@@ -1,14 +1,16 @@
 # Webscraping
 
-Ce programme python permets de récupérer certaines données des livres vendus sur le site Books to Scrape
+Ce programme python permet de récupérer certaines données des livres vendus sur le site Books to Scrape
 
 ## Installation et Lancement
 
-Dans Git Bash, utiliser les commandes suivantes pour installer les requirements puis pour lancer l'éxecution du programme :
+Utiliser les commandes suivantes pour créer un environnement, installer les requirements puis pour lancer l'éxecution du programme :
 
 ```bash
 $ git clone https://github.com/TheHarryPop/Webscraping.git
-$ cd ../chemin/du/dossier
+$ cd Webscraping
+$ python3 -m venv env (Sous Windows => python -m venv env)
+$ source env/bin/activate (Sous Windows => env\Scripts\activate)
 $ pip install -r requirements.txt
 $ python main.py
 ```
